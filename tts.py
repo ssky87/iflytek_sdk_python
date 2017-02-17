@@ -5,9 +5,11 @@ from io import BytesIO
 import wave
 import platform
 import logging
+import os
 
 logging.basicConfig(level=logging.DEBUG)
 
+BASEPATH=os.path.split(os.path.realpath(__file__))[0]
 
 def play(filename):
     import pygame
@@ -16,8 +18,6 @@ def play(filename):
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy() == True:
         continue
-
-
 
 def saveWave(raw_data,_tmpFile = 'test.wav'):
     f = wave.open(_tmpFile,'w')
@@ -29,13 +29,10 @@ def saveWave(raw_data,_tmpFile = 'test.wav'):
 def text_to_speech(src_text="这不仅仅是一个测试",file_name = None):
 
     plat = platform.architecture()
-    if plat[1] == 'WindowsPE' :
-        cur = cdll.LoadLibrary('./win/libmsc.lib')
+    if plat[0] == '32bit':
+        cur = cdll.LoadLibrary(BASEPATH + '/x86/libmsc.so')
     else:
-        if plat[0] == '32bit':
-            cur = cdll.LoadLibrary('./x86/libmsc.so')
-        else:
-            cur = cdll.LoadLibrary('./x64/libmsc.so')
+        cur = cdll.LoadLibrary(BASEPATH + '/x64/libmsc.so')
        
 
     MSPLogin = cur.MSPLogin
